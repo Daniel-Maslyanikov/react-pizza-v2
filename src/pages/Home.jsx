@@ -5,7 +5,7 @@ import Sort from '../components/Sort';
 import PizzaBlock from '../components/PizzaBlock';
 import Skeleton from '../components/PizzaBlock/Skeleton';
 
-const Home = () => {
+const Home = ({ searchValue }) => {
   const [items, setItems] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [categoryId, setCategoryId] = React.useState(0);
@@ -17,12 +17,13 @@ const Home = () => {
   React.useEffect(() => {
     setIsLoading(true);
 
-		const order = sortType.sortProp.includes('-') ? 'asc' : 'desc';
-		const sortBy = sortType.sortProp.replace('-', '');
-		const category = categoryId > 0 ? `category=${categoryId}` : '';
+    const order = sortType.sortProp.includes('-') ? 'asc' : 'desc';
+    const sortBy = sortType.sortProp.replace('-', '');
+    const category = categoryId > 0 ? `category=${categoryId}` : '';
+		const search = searchValue ? `&search=${searchValue}` : '';
 
     fetch(
-      `https://63e1011159bb472a742e4482.mockapi.io/items?${category}&sortBy=${sortBy}&order=${order}`,
+      `https://63e1011159bb472a742e4482.mockapi.io/items?${category}&sortBy=${sortBy}&order=${order}${search}`,
     )
       .then((res) => {
         return res.json();
@@ -32,7 +33,10 @@ const Home = () => {
         setIsLoading(false);
       });
     window.scrollTo(0, 0);
-  }, [categoryId, sortType]);
+  }, [categoryId, sortType, searchValue]);
+
+  const skeletons = [...new Array(9)].map((_, index) => <Skeleton key={index} />);
+  const pizzas = items.map((obj) => <PizzaBlock key={obj.id} {...obj} />);
 
   return (
     <div className="container">
@@ -41,11 +45,7 @@ const Home = () => {
         <Sort value={sortType} onChangeSort={(id) => setSortType(id)} />
       </div>
       <h2 className="content__title">Все пиццы</h2>
-      <div className="content__items">
-        {isLoading
-          ? [...new Array(9)].map((_, index) => <Skeleton key={index} />)
-          : items.map((obj) => <PizzaBlock key={obj.id} {...obj} />)}
-      </div>
+      <div className="content__items">{isLoading ? skeletons : pizzas}</div>
     </div>
   );
 };
