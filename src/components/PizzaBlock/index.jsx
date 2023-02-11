@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-import styles from './PizzaBlock.module.scss'
+import styles from './PizzaBlock.module.scss';
 
 function PizzaBlock({ title, price, imageUrl, types, sizes }) {
   const [activeType, setActiveType] = React.useState(0);
