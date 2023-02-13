@@ -1,10 +1,13 @@
 import React from 'react';
 import axios from 'axios';
-import { useSelector, useDispatch } from 'react-redux';
+import qs from 'qs';
 
-import { setCategoryId, setCurrentPage } from '../redux/slices/filterSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
+import { setCategoryId, setCurrentPage, setFilters } from '../redux/slices/filterSlice';
 import Categories from '../components/Categories';
-import Sort from '../components/Sort';
+import Sort, { list } from '../components/Sort';
 import PizzaBlock from '../components/PizzaBlock';
 import Skeleton from '../components/PizzaBlock/Skeleton';
 import Pagination from '../components/Pagination';
@@ -12,6 +15,7 @@ import Pagination from '../components/Pagination';
 import { SearchContext } from '../App';
 
 const Home = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { categoryId, sort, currentPage } = useSelector((state) => state.filter);
 
@@ -27,8 +31,8 @@ const Home = () => {
     dispatch(setCurrentPage(number));
   };
 
-  React.useEffect(() => {
-    setIsLoading(true);
+	const fetchPizzas = () => {
+		setIsLoading(true);
 
     const order = sort.sortProp.includes('-') ? 'asc' : 'desc';
     const sortBy = sort.sortProp.replace('-', '');
@@ -42,7 +46,35 @@ const Home = () => {
         setItems(res.data);
         setIsLoading(false);
       });
+	}
+
+  React.useEffect(() => {
+    if (window.location.search) {
+      const params = qs.parse(window.location.search.substring(1));
+
+      const sort = list.find((obj) => obj.sortProp === params.sortProp);
+
+      dispatch(
+        setFilters({
+          ...params,
+          sort,
+        }),
+      );
+    }
+  }, []);
+
+  React.useEffect(() => {
     window.scrollTo(0, 0);
+  }, [categoryId, sort.sortProp, searchValue, currentPage]);
+
+  React.useEffect(() => {
+    const querryString = qs.stringify({
+      sortProp: sort.sortProp,
+      categoryId,
+      currentPage,
+    });
+
+    navigate(`?${querryString}`);
   }, [categoryId, sort.sortProp, searchValue, currentPage]);
 
   const skeletons = [...new Array(9)].map((_, index) => <Skeleton key={index} />);
