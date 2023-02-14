@@ -17,6 +17,9 @@ import { SearchContext } from '../App';
 const Home = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const isSearch = React.useRef(false);
+  const isMounted = React.useRef(false);
+
   const { categoryId, sort, currentPage } = useSelector((state) => state.filter);
 
   const { searchValue } = React.useContext(SearchContext);
@@ -31,8 +34,8 @@ const Home = () => {
     dispatch(setCurrentPage(number));
   };
 
-	const fetchPizzas = () => {
-		setIsLoading(true);
+  const fetchPizzas = () => {
+    setIsLoading(true);
 
     const order = sort.sortProp.includes('-') ? 'asc' : 'desc';
     const sortBy = sort.sortProp.replace('-', '');
@@ -46,7 +49,19 @@ const Home = () => {
         setItems(res.data);
         setIsLoading(false);
       });
-	}
+  };
+
+  React.useEffect(() => {
+    if (isMounted.current) {
+      const querryString = qs.stringify({
+        sortProp: sort.sortProp,
+        categoryId,
+        currentPage,
+      });
+      navigate(`?${querryString}`);
+    }
+    isMounted.current = true;
+  }, [categoryId, sort.sortProp, currentPage]);
 
   React.useEffect(() => {
     if (window.location.search) {
@@ -60,21 +75,18 @@ const Home = () => {
           sort,
         }),
       );
+      isSearch.current = true;
     }
   }, []);
 
   React.useEffect(() => {
     window.scrollTo(0, 0);
-  }, [categoryId, sort.sortProp, searchValue, currentPage]);
 
-  React.useEffect(() => {
-    const querryString = qs.stringify({
-      sortProp: sort.sortProp,
-      categoryId,
-      currentPage,
-    });
+    if (!isSearch.current) {
+      fetchPizzas();
+    }
 
-    navigate(`?${querryString}`);
+    isSearch.current = false;
   }, [categoryId, sort.sortProp, searchValue, currentPage]);
 
   const skeletons = [...new Array(9)].map((_, index) => <Skeleton key={index} />);
