@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import CartItem from '../components/CartItem';
 import { clearItem } from '../redux/slices/cartSlice';
+import CartEmpty from '../components/CartEmpty';
 
 const NotFound = () => {
   const dispatch = useDispatch();
@@ -14,6 +15,10 @@ const NotFound = () => {
       dispatch(clearItem());
     }
   };
+
+	if (!totalPrice) {
+		return <CartEmpty />
+	}
 
   return (
     <div className="container container--cart">
