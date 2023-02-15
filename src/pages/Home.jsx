@@ -34,21 +34,25 @@ const Home = () => {
     dispatch(setCurrentPage(number));
   };
 
-  const fetchPizzas = () => {
+  const fetchPizzas = async () => {
     setIsLoading(true);
 
     const order = sort.sortProp.includes('-') ? 'asc' : 'desc';
     const sortBy = sort.sortProp.replace('-', '');
     const category = categoryId > 0 ? `category=${categoryId}` : '';
     const search = searchValue ? `&search=${searchValue}` : '';
-    axios
-      .get(
+
+    try {
+      const res = await axios.get(
         `https://63e1011159bb472a742e4482.mockapi.io/items?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`,
-      )
-      .then((res) => {
-        setItems(res.data);
-        setIsLoading(false);
-      });
+      );
+      setItems(res.data);
+    } catch (error) {
+      console.log('ERR', error);
+      alert('Ошибка при получении пицц');
+    } finally {
+      setIsLoading(false);
+		}
   };
 
   React.useEffect(() => {
