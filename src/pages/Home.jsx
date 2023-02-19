@@ -2,16 +2,20 @@ import React from 'react';
 import qs from 'qs';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-import { selectFilter, setCategoryId, setCurrentPage, setFilters } from '../redux/slices/filterSlice';
+import {
+  selectFilter,
+  setCategoryId,
+  setCurrentPage,
+  setFilters,
+} from '../redux/slices/filterSlice';
 import { fetchPizzas, selectPizzaData } from '../redux/slices/pizzaSlice';
 import Categories from '../components/Categories';
 import Sort, { list } from '../components/Sort';
 import PizzaBlock from '../components/PizzaBlock';
 import Skeleton from '../components/PizzaBlock/Skeleton';
 import Pagination from '../components/Pagination';
-
 
 const Home = () => {
   const navigate = useNavigate();
@@ -21,7 +25,6 @@ const Home = () => {
 
   const { categoryId, sort, currentPage, searchValue } = useSelector(selectFilter);
   const { items, status } = useSelector(selectPizzaData);
-
 
   const onChangeCategory = (id) => {
     dispatch(setCategoryId(id));
@@ -87,7 +90,11 @@ const Home = () => {
   }, [categoryId, sort.sortProp, searchValue, currentPage]);
 
   const skeletons = [...new Array(9)].map((_, index) => <Skeleton key={index} />);
-  const pizzas = items.map((obj) => <PizzaBlock key={obj.id} {...obj} />);
+  const pizzas = items.map((obj) => (
+    <Link key={obj.id} to={`/pizza/${obj.id}`}>
+      <PizzaBlock {...obj} />
+    </Link>
+  ));
 
   return (
     <div className="container">
