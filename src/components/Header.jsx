@@ -4,9 +4,10 @@ import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 import Search from '../components/Search/index';
+import { selectCart } from '../redux/slices/cartSlice';
 
 function Header() {
-  const { totalPrice, items } = useSelector((state) => state.cart);
+  const { totalPrice, items } = useSelector(selectCart);
 
 	const totalCount = items.reduce((sum, item) => sum + item.count, 0)
 
