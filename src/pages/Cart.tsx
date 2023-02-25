@@ -5,10 +5,10 @@ import CartItem from '../components/CartItem';
 import { clearItem } from '../redux/slices/cartSlice';
 import CartEmpty from '../components/CartEmpty';
 
-const NotFound = () => {
+const Cart: React.FC = () => {
   const dispatch = useDispatch();
-  const { totalPrice, items } = useSelector((state) => state.cart);
-	const totalCount = items.reduce((sum, item) => sum + item.count, 0)
+  const { totalPrice, items } = useSelector((state:any) => state.cart);
+	const totalCount = items.reduce((sum:number, item:any) => sum + item.count, 0)
 
   const onClickClear = () => {
     if (window.confirm('Очистить корзину?')) {
@@ -89,7 +89,7 @@ const NotFound = () => {
           </div>
         </div>
         <div className="content__items">
-          {items.map((item) => (
+          {items.map((item:any) => (
             <CartItem key={item.id} {...item} />
           ))}
         </div>
@@ -132,4 +132,4 @@ const NotFound = () => {
   );
 };
 
-export default NotFound;
+export default Cart;
