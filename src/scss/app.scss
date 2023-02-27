@@ -30,15 +30,15 @@ body {
 		text-align: center;
 
 		h2 {
-		font-size: 28px;
-		font-weight: 700;
-		margin-bottom: 10px;
-	}
+			font-size: 28px;
+			font-weight: 700;
+			margin-bottom: 10px;
+		}
 
-	p {
-		font-size: 20px
+		p {
+			font-size: 20px;
+		}
 	}
-}
 
 	&__title {
 		font-weight: 800;
@@ -230,6 +230,26 @@ body {
 				svg {
 					path:first-of-type {
 						display: none;
+					}
+				}
+
+				&--disabled {
+					opacity: 0.4;
+					border-color: #787878;
+
+					&:active {
+						transform: none;
+					}
+
+					&:hover {
+						background-color: transparent;
+						svg path {
+							fill: #787878;
+						}
+					}
+
+					svg path {
+						fill: #787878;
 					}
 				}
 			}
